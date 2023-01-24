@@ -1,5 +1,9 @@
+import { spawn } from "child_process";
+import { existsSync, readFileSync, readSync } from "fs";
 import gitRepoInfo from "git-repo-info";
+import path from "path";
 import { GitError, SimpleGit, simpleGit, SimpleGitBase, SimpleGitTaskCallback } from "simple-git";
+import treeKill from "tree-kill";
 
 interface IGitDetails {
     branchName: string,
@@ -70,7 +74,11 @@ export function getGitDetails(dir?: string): IGitDetails | undefined  {
 
     
     const rebase = async () => {
-        await gitPromise(git, 'rebase', '-i', 'origin/master');
+        await completeAutoRebase(details.root);
+        // setTimeout(() => {
+        //     if (existsSync())
+        // }, 500);
+        // await gitPromise(git, 'rebase', '-i', 'origin/master');
     }
 
     return {
@@ -86,4 +94,29 @@ export function getGitDetails(dir?: string): IGitDetails | undefined  {
         fetch,
         rebase
     }
+}
+
+function completeAutoRebase(root: string) {
+    return new Promise<boolean>((res) => {
+        console.log('Starting rebase');
+        const rebaseProcess = spawn('git rebase -i origin/master', {
+            shell: true,
+            cwd: root
+        });
+        
+        console.log('Process Began');
+        
+        setTimeout(() => {
+            console.log('Manual Editing Started');
+            rebaseProcess.kill('SIGHUP');
+            const rebaseFile = path.join(root, './.git/rebase-merge/git-rebase-todo');
+            if (!existsSync(rebaseFile)) res(false);
+            console.log('File Found');
+            const file = readFileSync(rebaseFile).toString();
+            console.log(file);
+            res(true);
+        }, 1000);
+
+
+    })
 }
