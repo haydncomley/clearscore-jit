@@ -86,7 +86,7 @@ async function doNewBranch() {
 async function doSquash() {
     const git = getGitDetails();
 
-    
+    git.rebase();
 
     // await git.fetch();
     // await git.rebase();

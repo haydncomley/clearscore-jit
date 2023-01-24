@@ -115,8 +115,6 @@ function completeAutoRebase(root: string) {
             const file = readFileSync(rebaseFile).toString();
             console.log(file);
             res(true);
-        }, 1000);
-
-
+        }, 2000);
     })
 }
