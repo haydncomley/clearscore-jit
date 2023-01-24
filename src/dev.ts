@@ -2,6 +2,8 @@ import { simpleGit } from "simple-git";
 import { getGitDetails } from "./git";
 import { askConfirm, askQuestions, whichCommitMessage, whichDevelopmentStage } from "./questions";
 
+// test
+
 export async function checkDevelopmentStage() {
     const { developmentStage } = await askQuestions([
         whichDevelopmentStage(),
