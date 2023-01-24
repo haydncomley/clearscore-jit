@@ -2,6 +2,19 @@ import chalk from "chalk";
 import { existsSync } from "fs";
 import { PromptObject } from "prompts";
 
+export function selectConfirm(id: string, title: string) {
+    return {
+        type: 'toggle',
+        name: id,
+        message: title,
+        initial: true,
+        active: 'yes',
+        inactive: 'no',
+        hint: `Arrows to choose option. Return to select.`,
+        instructions: false
+    } as PromptObject
+}
+
 export function selectFromList(id: string, title: string, options: { title: string; value: any; }[], multiple?: boolean) {
     return {
         type: multiple ? 'multiselect' : 'select',

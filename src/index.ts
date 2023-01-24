@@ -1,20 +1,29 @@
+import chalk from 'chalk';
+import { checkDevelopmentStage } from './dev';
 import { getGitDetails } from './git';
-import { askQuestions, whichCommitType, whichDevelopmentStage, whichDir, whichJiraTicket, whichPackageName } from './questions';
 
 async function run() {
-    const gitDetails = getGitDetails(process.cwd());
-    console.log(gitDetails);
+    process.stdout.cursorTo(0, 0);
+    process.stdout.clearScreenDown();
 
+    const gitDetails = getGitDetails();
+    if (!gitDetails) {
+        console.log(chalk.yellow(chalk.bold('This directory doesn\'t contain a git repo.')))
+        process.exit(1);
+    }
 
+    console.log(chalk.magentaBright(`${chalk.bold('Targeted Dir:')} ${gitDetails.root}`))
+
+    await checkDevelopmentStage();
     
-    const responses = await askQuestions([
-        whichDevelopmentStage(),
-        whichCommitType(),
-        whichPackageName(),
-        whichJiraTicket(),
-        whichDir()
-    ]);
-    console.log(responses);
+    // const responses = await askQuestions([
+    //     whichDevelopmentStage(),
+    //     whichCommitType(),
+    //     whichPackageName(),
+    //     whichJiraTicket(),
+    //     whichDir()
+    // ]);
+    // console.log(responses);
 }
 
 run();
