@@ -1,12 +1,22 @@
+import { spawn } from "child_process";
+import { existsSync, readFileSync, readSync, writeFileSync } from "fs";
 import gitRepoInfo from "git-repo-info";
+import path from "path";
 import { GitError, SimpleGit, simpleGit, SimpleGitBase, SimpleGitTaskCallback } from "simple-git";
+import treeKill from "tree-kill";
 
 interface IGitDetails {
     branchName: string,
     root: string,
+    fetch: () => Promise<void>,
+    autoRebase: (newMessage: string) => Promise<void>,
+    clean: () => Promise<void>,
+    newBranch: (branch: string) => Promise<void>,
     stageAll: () => Promise<void>,
     commit: (message: string) => Promise<void>,
+    commitWithDetails: (type: string, product: string, message: string, ticket: string, isBreaking?: string) => Promise<void>,
     push: (branch?: string) => Promise<void>,
+    quickPush: (branch?: string) => Promise<void>,
 }
 
 function gitPromise(git: SimpleGit, ...commands: string[]) {
@@ -30,25 +40,97 @@ export function getGitDetails(dir?: string): IGitDetails | undefined  {
     const git = simpleGit(details.root);
 
     const stageAll = async () => {
-        // git add .
         await gitPromise(git, 'add', '.');
     }
 
     const commit = async (message: string) => {
-        // git commit -m "{message}" --no-verify
         await gitPromise(git, 'commit', '-m', message, '--no-verify');
     }
 
-    const push = async (branch?: string) => {
-        // git push --set-upstream origin {branchName}
+    const commitWithDetails = async (type: string, product: string, message: string, ticket: string, isBreaking?: string) => {
+        if (!isBreaking) await gitPromise(git, 'commit', '-am', `"${type}(${product}): ${message}"`, '-m', ticket);
+        else await gitPromise(git, 'commit', '-am', `"${type}(${product}): ${message}"`, '-m', ticket), '-m', `"BREAKING CHANGE: ${isBreaking}"`;
+    }
+    
+    const quickPush = async (branch?: string) => {
         await gitPromise(git, 'push', '--set-upstream', 'origin', (branch || details.branch), '--no-verify');
+    }
+
+    const push = async (branch?: string) => {
+        await gitPromise(git, 'push', '--set-upstream', 'origin', (branch || details.branch));
+    }
+    
+    const clean = async () => {
+        await gitPromise(git, 'reset', '--hard', 'HEAD');
+    }
+
+    const newBranch = async (branch: string) => {
+        await gitPromise(git, 'checkout', '-b', branch);
+    }
+
+    const fetch = async () => {
+        await gitPromise(git, 'fetch');
+    }
+
+    
+    const autoRebase = async (message: string) => {
+        await completeAutoRebase(details.root, message);
+        await gitPromise(git, 'rebase', '--continue');
     }
 
     return {
         branchName: details.branch,
         root: details.root,
-        commit,
+        newBranch,
+        clean,
         stageAll,
-        push
+        commit,
+        commitWithDetails,
+        push,
+        quickPush,
+        fetch,
+        autoRebase
     }
+}
+
+function completeAutoRebase(root: string, newMessage: string) {
+    return new Promise<boolean>((res) => {
+        console.log('Starting rebase');
+        const rebaseProcess = spawn('git rebase -i origin/master', {
+            shell: true,
+            cwd: root
+        });
+        
+        console.log('Process Began');
+        
+        setTimeout(() => {
+            console.log('Manual Editing Started');
+            rebaseProcess.kill('SIGHUP');
+            const rebaseFile = path.join(root, './.git/rebase-merge/git-rebase-todo');
+            // const rebaseFile = path.join(root, './test');
+            if (!existsSync(rebaseFile)) res(false);
+            console.log('File Found');
+            const file = readFileSync(rebaseFile).toString();
+
+            const lines = file.split('\n');
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                let rephrased = '';
+                
+                if (i === 0) {
+                    const lineSplit = line.split(' ');
+                    rephrased = `${lineSplit[0]} ${lineSplit[1]} ${newMessage}`;
+                } else if (line.trim() == '') {
+                    continue;
+                } else {
+                    rephrased = line.replace('pick', 'fixup');
+                }
+
+                lines[i] = rephrased;
+            }
+
+            writeFileSync(rebaseFile, lines.join('\n'));
+            res(true);
+        }, 1000);
+    })
 }

@@ -2,12 +2,12 @@ import chalk from "chalk";
 import { existsSync } from "fs";
 import { PromptObject } from "prompts";
 
-export function selectConfirm(id: string, title: string) {
+export function selectConfirm(id: string, title: string, initial = true) {
     return {
         type: 'toggle',
         name: id,
         message: title,
-        initial: true,
+        initial,
         active: 'yes',
         inactive: 'no',
         hint: `Arrows to choose option. Return to select.`,
@@ -50,6 +50,6 @@ export function selectTicketNumber(id: string, title: string) {
             const regex = /.+-.+/gm;
             return !!(value as string).match(regex) ? true : 'Invalid Ticket Format';
         },
-        format: value => (value as string).toUpperCase()
+        format: value => (value as string).toUpperCase().trim()
     } as PromptObject
 }

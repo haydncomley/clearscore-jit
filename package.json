@@ -2,7 +2,10 @@
   "name": "lets-git",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src",
+  "bin": {
+    "lets-commit": "bin/index.js"
+  },
   "scripts": {
     "build": "node ./build.js",
     "start": "ts-node-dev --exit-child ./src/index.ts"
