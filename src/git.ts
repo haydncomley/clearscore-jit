@@ -68,8 +68,9 @@ export function getGitDetails(dir?: string): IGitDetails | undefined  {
         await gitPromise(git, 'fetch');
     }
 
+    
     const rebase = async () => {
-        await gitPromise(git, 'rebase', 'origin/master');
+        await gitPromise(git, 'rebase', '-i', 'origin/master');
     }
 
     return {
