@@ -1,5 +1,6 @@
 import chalk from "chalk";
 import { simpleGit } from "simple-git";
+import { fileURLToPath } from "url";
 import { getGitDetails } from "./git";
 import { askConfirm, askQuestions, whichBranchName, whichBreakingChangesMade, whichCommitMessage, whichCommitType, whichDevelopmentStage, whichJiraTicket, whichPackageName } from "./questions";
 
@@ -21,6 +22,7 @@ export async function checkDevelopmentStage() {
             await doFullCommit();
             break;
         case 'squash':
+            await doSquash();
             break;
         case 'branchNew':
             await doNewBranch();
@@ -79,4 +81,10 @@ async function doNewBranch() {
     
     await git.newBranch(`${commitType}/${branchName}`);
     done();
+}
+
+async function doSquash() {
+    const git = getGitDetails();
+    await git.fetch();
+    await git.rebase();
 }

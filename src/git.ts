@@ -4,6 +4,8 @@ import { GitError, SimpleGit, simpleGit, SimpleGitBase, SimpleGitTaskCallback } 
 interface IGitDetails {
     branchName: string,
     root: string,
+    fetch: () => Promise<void>,
+    rebase: () => Promise<void>,
     clean: () => Promise<void>,
     newBranch: (branch: string) => Promise<void>,
     stageAll: () => Promise<void>,
@@ -62,6 +64,14 @@ export function getGitDetails(dir?: string): IGitDetails | undefined  {
         await gitPromise(git, 'checkout', '-b', branch);
     }
 
+    const fetch = async () => {
+        await gitPromise(git, 'fetch');
+    }
+
+    const rebase = async () => {
+        await gitPromise(git, 'rebase', 'origin/master');
+    }
+
     return {
         branchName: details.branch,
         root: details.root,
@@ -72,5 +82,7 @@ export function getGitDetails(dir?: string): IGitDetails | undefined  {
         commitWithDetails,
         push,
         quickPush,
+        fetch,
+        rebase
     }
 }
