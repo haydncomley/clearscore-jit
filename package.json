@@ -1,11 +1,9 @@
 {
-  "name": "lets-git",
+  "name": "jit",
   "version": "1.0.0",
   "description": "",
   "main": "src/index.ts",
-  "bin": {
-    "lets-git": "bin/index.js"
-  },
+  "bin": "bin/index.js",
   "scripts": {
     "build": "node ./build.js",
     "start": "ts-node-dev --exit-child ./src/index.ts"
