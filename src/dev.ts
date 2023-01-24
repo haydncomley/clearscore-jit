@@ -86,8 +86,16 @@ async function doNewBranch() {
 async function doSquash() {
     const git = getGitDetails();
 
-    git.rebase();
+    const { commitMessage, commitType, jiraTicket, packageName, breakingChanges } = await askQuestions([
+        whichCommitType(),
+        // whichJiraTicket(),
+        whichPackageName(),
+        whichCommitMessage(),
+        // whichBreakingChangesMade()
+    ]);
 
-    // await git.fetch();
-    // await git.rebase();
+    const newMessage = `${commitType}(${packageName}): ${commitMessage}`;
+    // ""``
+
+    git.autoRebase(newMessage);
 }

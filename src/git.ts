@@ -1,5 +1,5 @@
 import { spawn } from "child_process";
-import { existsSync, readFileSync, readSync } from "fs";
+import { existsSync, readFileSync, readSync, writeFileSync } from "fs";
 import gitRepoInfo from "git-repo-info";
 import path from "path";
 import { GitError, SimpleGit, simpleGit, SimpleGitBase, SimpleGitTaskCallback } from "simple-git";
@@ -9,7 +9,7 @@ interface IGitDetails {
     branchName: string,
     root: string,
     fetch: () => Promise<void>,
-    rebase: () => Promise<void>,
+    autoRebase: (newMessage: string) => Promise<void>,
     clean: () => Promise<void>,
     newBranch: (branch: string) => Promise<void>,
     stageAll: () => Promise<void>,
@@ -73,12 +73,9 @@ export function getGitDetails(dir?: string): IGitDetails | undefined  {
     }
 
     
-    const rebase = async () => {
-        await completeAutoRebase(details.root);
-        // setTimeout(() => {
-        //     if (existsSync())
-        // }, 500);
-        // await gitPromise(git, 'rebase', '-i', 'origin/master');
+    const autoRebase = async (message: string) => {
+        await completeAutoRebase(details.root, message);
+        await gitPromise(git, 'rebase', '--continue');
     }
 
     return {
@@ -92,11 +89,11 @@ export function getGitDetails(dir?: string): IGitDetails | undefined  {
         push,
         quickPush,
         fetch,
-        rebase
+        autoRebase
     }
 }
 
-function completeAutoRebase(root: string) {
+function completeAutoRebase(root: string, newMessage: string) {
     return new Promise<boolean>((res) => {
         console.log('Starting rebase');
         const rebaseProcess = spawn('git rebase -i origin/master', {
@@ -110,11 +107,30 @@ function completeAutoRebase(root: string) {
             console.log('Manual Editing Started');
             rebaseProcess.kill('SIGHUP');
             const rebaseFile = path.join(root, './.git/rebase-merge/git-rebase-todo');
+            // const rebaseFile = path.join(root, './test');
             if (!existsSync(rebaseFile)) res(false);
             console.log('File Found');
             const file = readFileSync(rebaseFile).toString();
-            console.log(file);
+
+            const lines = file.split('\n');
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                let rephrased = '';
+                
+                if (i === 0) {
+                    const lineSplit = line.split(' ');
+                    rephrased = `${lineSplit[0]} ${lineSplit[1]} ${newMessage}`;
+                } else if (line.trim() == '') {
+                    continue;
+                } else {
+                    rephrased = line.replace('pick', 'fixup');
+                }
+
+                lines[i] = rephrased;
+            }
+
+            writeFileSync(rebaseFile, lines.join('\n'));
             res(true);
-        }, 2000);
+        }, 1000);
     })
 }
