@@ -17,8 +17,8 @@ export function whichDevelopmentStage() {
     return selectFromList('developmentStage', 'What do you want to do?', [
         { title: `Quick Commit ${chalk.grey('(quickly push code while developing)')}`, value: 'commitQuick'},
         { title: `Full Commit ${chalk.grey('(create a commit ready for a PR)')}`, value: 'commitFull'},
-        { title: `Squash Changes ${chalk.grey('(compile all commits into one for a PR)')}`, value: 'squash'},
         { title: `New Branch ${chalk.grey('(to develop a new feature/fix)')}`, value: 'branchNew'},
+        { title: `Squash Changes ${chalk.yellow('[EXPERIMENTAL]')} ${chalk.grey('(compile all commits into one for a PR)')}`, value: 'squash'},
     ]);
 }
 
