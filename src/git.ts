@@ -4,9 +4,13 @@ import { GitError, SimpleGit, simpleGit, SimpleGitBase, SimpleGitTaskCallback } 
 interface IGitDetails {
     branchName: string,
     root: string,
+    clean: () => Promise<void>,
+    newBranch: (branch: string) => Promise<void>,
     stageAll: () => Promise<void>,
     commit: (message: string) => Promise<void>,
+    commitWithDetails: (type: string, product: string, message: string, ticket: string, isBreaking?: string) => Promise<void>,
     push: (branch?: string) => Promise<void>,
+    quickPush: (branch?: string) => Promise<void>,
 }
 
 function gitPromise(git: SimpleGit, ...commands: string[]) {
@@ -30,25 +34,43 @@ export function getGitDetails(dir?: string): IGitDetails | undefined  {
     const git = simpleGit(details.root);
 
     const stageAll = async () => {
-        // git add .
         await gitPromise(git, 'add', '.');
     }
 
     const commit = async (message: string) => {
-        // git commit -m "{message}" --no-verify
         await gitPromise(git, 'commit', '-m', message, '--no-verify');
     }
 
-    const push = async (branch?: string) => {
-        // git push --set-upstream origin {branchName}
+    const commitWithDetails = async (type: string, product: string, message: string, ticket: string, isBreaking?: string) => {
+        if (!isBreaking) await gitPromise(git, 'commit', '-am', `"${type}(${product}): ${message}"`, '-m', ticket);
+        else await gitPromise(git, 'commit', '-am', `"${type}(${product}): ${message}"`, '-m', ticket), '-m', `"BREAKING CHANGE: ${isBreaking}"`;
+    }
+    
+    const quickPush = async (branch?: string) => {
         await gitPromise(git, 'push', '--set-upstream', 'origin', (branch || details.branch), '--no-verify');
+    }
+
+    const push = async (branch?: string) => {
+        await gitPromise(git, 'push', '--set-upstream', 'origin', (branch || details.branch));
+    }
+    
+    const clean = async () => {
+        await gitPromise(git, 'reset', '--hard', 'HEAD');
+    }
+
+    const newBranch = async (branch: string) => {
+        await gitPromise(git, 'checkout', '-b', branch);
     }
 
     return {
         branchName: details.branch,
         root: details.root,
-        commit,
+        newBranch,
+        clean,
         stageAll,
-        push
+        commit,
+        commitWithDetails,
+        push,
+        quickPush,
     }
 }

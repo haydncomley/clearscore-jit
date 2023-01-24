@@ -2,7 +2,7 @@
     "compilerOptions": {
         "module": "commonjs",
         "esModuleInterop": true,
-        "target": "es6",
+        "target": "es2021",
         "moduleResolution": "node",
         "allowSyntheticDefaultImports": true,
         "sourceMap": true,
@@ -11,5 +11,5 @@
             "node_modules/types",
         ]
     },
-    "lib": [ "ES2020" ]
+    "lib": [ "es2021" ]
 }
