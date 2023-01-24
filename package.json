@@ -2,9 +2,9 @@
   "name": "lets-git",
   "version": "1.0.0",
   "description": "",
-  "main": "src",
+  "main": "src/index.ts",
   "bin": {
-    "lets-commit": "bin/index.js"
+    "lets-git": "bin/index.js"
   },
   "scripts": {
     "build": "node ./build.js",
