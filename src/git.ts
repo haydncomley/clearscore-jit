@@ -98,11 +98,12 @@ function completeAutoRebase(root: string, newMessage: string) {
     return new Promise<boolean>((res) => {
         console.log('Starting rebase');
 
+        const rebaseScript = path.join(__dirname, './rebaseScript.sh');
         const nameFile = path.join(__dirname, './jit-name-file.txt');
         if (existsSync(nameFile)) rmSync(nameFile);
         writeFileSync(nameFile, newMessage);
 
-        const rebaseProcess = spawn(`GIT_SEQUENCE_EDITOR="${path.join(__dirname, './rebaseScript.sh')}" git rebase -i origin/master`, {
+        const rebaseProcess = spawn(`GIT_SEQUENCE_EDITOR="${rebaseScript}" VISUAL="${rebaseScript}" EDITOR="${rebaseScript}" git rebase -i origin/master`, {
             shell: true,
             cwd: root
         });
