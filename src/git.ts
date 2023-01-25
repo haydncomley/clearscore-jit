@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { spawn } from "child_process";
-import { existsSync, readFileSync, readSync, writeFileSync } from "fs";
+import { existsSync, readFileSync, readSync, rmSync, writeFileSync } from "fs";
 import gitRepoInfo from "git-repo-info";
 import path from "path";
 import { GitError, SimpleGit, simpleGit, SimpleGitBase, SimpleGitTaskCallback } from "simple-git";
@@ -96,10 +96,14 @@ export function getGitDetails(dir?: string): IGitDetails | undefined  {
 
 function completeAutoRebase(root: string, newMessage: string) {
     return new Promise<boolean>((res) => {
-        console.log(path.join(__dirname, './test.sh'));
+        const nameFile = path.join(__dirname, './jit-name-file');
+        if (existsSync(nameFile)) rmSync(nameFile);
+        writeFileSync(nameFile, newMessage);
+
+        console.log(path.join(__dirname, './rebaseScript.sh'));
         console.log('Starting rebase');
 
-        const rebaseProcess = spawn(`GIT_SEQUENCE_EDITOR="${path.join(__dirname, './test.sh')}" git rebase -i origin/master`, {
+        const rebaseProcess = spawn(`GIT_SEQUENCE_EDITOR="${path.join(__dirname, './test.sh')}" git rebase -i origin/master --autosquash`, {
             shell: true,
             cwd: root
         });
