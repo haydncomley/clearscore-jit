@@ -105,9 +105,10 @@ function completeAutoRebase(root: string, newMessage: string) {
         if (existsSync(nameFile)) rmSync(nameFile);
         writeFileSync(nameFile, newMessage);
 
-        const rebaseProcess = spawn(`GIT_SEQUENCE_EDITOR="${rebaseScript}" VISUAL="${rebaseScript}" EDITOR="${rebaseScript}" git rebase -i origin/master --autosquash`, {
+        const rebaseProcess = spawn(`GIT_SEQUENCE_EDITOR="${rebaseScript}" git rebase -i origin/master --autosquash`, {
             shell: true,
-            cwd: root
+            cwd: root,
+            stdio: 'inherit'
         });
         
         rebaseProcess.stdout.on('data', (data) => {
