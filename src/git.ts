@@ -76,9 +76,19 @@ export function getGitDetails(dir?: string): IGitDetails | undefined  {
 
     
     const autoRebase = async (message: string, ticket: string, isBreaking?: string) => {
+        // await gitPromise(git, 'config', 'pull.rebase', 'true');
         await completeAutoRebase(details.root, message);
+        console.log(chalk.cyanBright('Rebase Complete.'));
+
+        console.log(chalk.magentaBright('Updating Commit Message (this can take a minute because of NX/husky)...'));
         if (!isBreaking) await gitPromise(git, 'commit', '--amend', '-am', `${message}`, '-m', ticket);
         else await gitPromise(git, 'commit', '--amend', '-am', `${message}`, '-m', ticket), '-m', `"BREAKING CHANGE: ${isBreaking}"`;
+        console.log(chalk.cyanBright('Update Complete.'));
+        
+        console.log(chalk.magentaBright('Syncing...'));
+        await gitPromise(git, 'pull', '--rebase', 'origin', 'master');
+        await gitPromise(git, 'push');
+        console.log(chalk.cyanBright('Completed Syncing.'));
     }
 
     return {
@@ -98,7 +108,7 @@ export function getGitDetails(dir?: string): IGitDetails | undefined  {
 
 function completeAutoRebase(root: string, newMessage: string) {
     return new Promise<boolean>((res) => {
-        console.log('Starting rebase');
+        console.log(chalk.magentaBright('Starting rebase...'));
 
         const rebaseScript = path.join(__dirname, './rebaseScript.sh');
         const nameFile = path.join(__dirname, './jit-name-file.txt');
