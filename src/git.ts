@@ -76,6 +76,7 @@ export function getGitDetails(dir?: string): IGitDetails | undefined  {
     
     const autoRebase = async (message: string, ticket: string, isBreaking?: string) => {
         await completeAutoRebase(details.root, message);
+        console.log('Auto Rebased Finished :)');
         if (isBreaking) await gitPromise(git, 'commit', '--amend', '-am', `"${message}"`, '-m', ticket);
         else await gitPromise(git, 'commit', '--amend', '-am', `"${message}"`, '-m', ticket), '-m', `"BREAKING CHANGE: ${isBreaking}"`;
     }
@@ -111,6 +112,10 @@ function completeAutoRebase(root: string, newMessage: string) {
         });
         
         rebaseProcess.on('exit', () => {
+            res(true);
+        });
+
+        rebaseProcess.on('close', () => {
             res(true);
         });
     })
