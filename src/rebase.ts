@@ -17,8 +17,7 @@ if (lines[0].startsWith('pick')) {
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i].trim();
         if (i === 0) {
-            const lineSplit = line[i].split(' ');
-            lines[i] = `pick ${lineSplit[1]} ${commitMessage}`
+            lines[i] = `pick ${lines[0].slice(5, 12)} ${commitMessage}`
         } else {
             lines[i] = line.replace('pick', 'fixup');
         }
