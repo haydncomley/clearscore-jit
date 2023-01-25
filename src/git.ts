@@ -24,6 +24,7 @@ function gitPromise(git: SimpleGit, ...commands: string[]) {
     return new Promise<void>((res) => {
         const callback: SimpleGitTaskCallback<string, GitError> = (e) => {
             if (e) {
+                console.log(chalk.red('-- GIT ERROR --'));
                 console.error(e);
                 process.exit(1);
             }
@@ -76,9 +77,8 @@ export function getGitDetails(dir?: string): IGitDetails | undefined  {
     
     const autoRebase = async (message: string, ticket: string, isBreaking?: string) => {
         await completeAutoRebase(details.root, message);
-        console.log('Auto Rebased Finished :)');
-        if (isBreaking) await gitPromise(git, 'commit', '--amend', '-am', `"${message}"`, '-m', ticket);
-        else await gitPromise(git, 'commit', '--amend', '-am', `"${message}"`, '-m', ticket), '-m', `"BREAKING CHANGE: ${isBreaking}"`;
+        if (!isBreaking) await gitPromise(git, 'commit', '-amend', '-am', `${message}`, '-m', ticket);
+        else await gitPromise(git, 'commit', '-amend', '-am', `${message}`, '-m', ticket), '-m', `"BREAKING CHANGE: ${isBreaking}"`;
     }
 
     return {
@@ -105,7 +105,7 @@ function completeAutoRebase(root: string, newMessage: string) {
         if (existsSync(nameFile)) rmSync(nameFile);
         writeFileSync(nameFile, newMessage);
 
-        const rebaseProcess = spawn(`GIT_SEQUENCE_EDITOR="${rebaseScript}" git rebase -i origin/master --autosquash`, {
+        const rebaseProcess = spawn(`GIT_SEQUENCE_EDITOR="${rebaseScript}" git rebase -i origin/master`, {
             shell: true,
             cwd: root,
             stdio: 'inherit'
