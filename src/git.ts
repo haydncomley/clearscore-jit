@@ -50,8 +50,8 @@ export function getGitDetails(dir?: string): IGitDetails | undefined  {
     }
 
     const commitWithDetails = async (type: string, product: string, message: string, ticket: string, isBreaking?: string) => {
-        if (!isBreaking) await gitPromise(git, 'commit', '-am', `"${type}(${product}): ${message}"`, '-m', ticket);
-        else await gitPromise(git, 'commit', '-am', `"${type}(${product}): ${message}"`, '-m', ticket), '-m', `"BREAKING CHANGE: ${isBreaking}"`;
+        if (!isBreaking) await gitPromise(git, 'commit', '-am', `${type}(${product}): ${message}`, '-m', ticket);
+        else await gitPromise(git, 'commit', '-am', `${type}(${product}): ${message}`, '-m', ticket), '-m', `"BREAKING CHANGE: ${isBreaking}"`;
     }
     
     const quickPush = async (branch?: string) => {
