@@ -10,7 +10,7 @@ interface IGitDetails {
     branchName: string,
     root: string,
     fetch: () => Promise<void>,
-    autoRebase: (newMessage: string) => Promise<void>,
+    autoRebase: (newMessage: string, ticket: string) => Promise<void>,
     clean: () => Promise<void>,
     newBranch: (branch: string) => Promise<void>,
     stageAll: () => Promise<void>,
@@ -74,9 +74,10 @@ export function getGitDetails(dir?: string): IGitDetails | undefined  {
     }
 
     
-    const autoRebase = async (message: string) => {
+    const autoRebase = async (message: string, ticket: string, isBreaking?: string) => {
         await completeAutoRebase(details.root, message);
-        // await gitPromise(git, 'rebase', '--continue');
+        if (isBreaking) await gitPromise(git, 'commit', '--amend', '-am', `"${message}"`, '-m', ticket);
+        else await gitPromise(git, 'commit', '--amend', '-am', `"${message}"`, '-m', ticket), '-m', `"BREAKING CHANGE: ${isBreaking}"`;
     }
 
     return {
@@ -110,6 +111,10 @@ function completeAutoRebase(root: string, newMessage: string) {
         
         rebaseProcess.stdout.on('data', (data) => {
             console.log('CMD: ' + data.toString());
+            if (data.toString().includes('Done')) {
+                console.log('Finished Rebase');
+                res(true);
+            }
         })
         rebaseProcess.stderr.on('data', (data) => {
             if (data.toString().includes('You have unstaged changes')) {
