@@ -76,7 +76,6 @@ export function getGitDetails(dir?: string): IGitDetails | undefined  {
     
     const autoRebase = async (message: string, ticket: string, isBreaking?: string) => {
         await completeAutoRebase(details.root, message);
-        await gitPromise(git, 'pull', '--rebase');
         // if (isBreaking) await gitPromise(git, 'commit', '--amend', '-am', `"${message}"`, '-m', ticket);
         // else await gitPromise(git, 'commit', '--amend', '-am', `"${message}"`, '-m', ticket), '-m', `"BREAKING CHANGE: ${isBreaking}"`;
     }
@@ -111,29 +110,7 @@ function completeAutoRebase(root: string, newMessage: string) {
             stdio: 'inherit'
         });
         
-        // rebaseProcess.stdout.on('data', (data) => {
-        //     console.log('OUT: ' + data.toString());
-        //     if (data.toString().includes('Done')) {
-        //         console.log('Finished Rebase');
-        //     }
-        // })
-        
-        // rebaseProcess.stderr.on('data', (data) => {
-        //     if (data.toString().includes('You have unstaged changes')) {
-        //         console.error(chalk.red('You have unstaged changes. Make sure you commit or stash before trying to rebase.'));
-        //     } else {
-        //         console.error(data.toString());
-        //     }
-        //     process.exit(1);
-        // })
-        
         rebaseProcess.on('exit', () => {
-            console.log('Rebase Exited')
-            res(true);
-        });
-
-        rebaseProcess.on('close', () => {
-            console.log('Rebase Closed')
             res(true);
         });
     })
