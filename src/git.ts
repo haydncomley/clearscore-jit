@@ -111,7 +111,7 @@ function completeAutoRebase(root: string, newMessage: string) {
         });
         
         rebaseProcess.stdout.on('data', (data) => {
-            console.log('CMD: ' + data.toString());
+            console.log('OUT: ' + data.toString());
             if (data.toString().includes('Done')) {
                 console.log('Finished Rebase');
             }
@@ -126,7 +126,7 @@ function completeAutoRebase(root: string, newMessage: string) {
             process.exit(1);
         })
         
-        rebaseProcess.on('close', () => {
+        rebaseProcess.on('exit', () => {
             console.log('Rebase Closed')
             res(true);
         });
