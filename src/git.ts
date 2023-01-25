@@ -85,10 +85,8 @@ export function getGitDetails(dir?: string): IGitDetails | undefined  {
         else await gitPromise(git, 'commit', '--amend', '-am', `${message}`, '-m', ticket), '-m', `"BREAKING CHANGE: ${isBreaking}"`;
         console.log(chalk.cyanBright('Update Complete.'));
         
-        console.log(chalk.magentaBright('Syncing...'));
-        await push();
+        await completeRebaseSync(details.root);
         console.log(chalk.cyanBright('Completed Syncing.'));
-        // await gitPromise(git, 'pull', '--rebase', 'origin', 'master');
     }
 
     return {
@@ -115,7 +113,27 @@ function completeAutoRebase(root: string, newMessage: string) {
         if (existsSync(nameFile)) rmSync(nameFile);
         writeFileSync(nameFile, newMessage);
 
-        const rebaseProcess = spawn(`yarn && git fetch && GIT_SEQUENCE_EDITOR="${rebaseScript}" git rebase -i origin/master`, {
+        const rebaseProcess = spawn(`git fetch && GIT_SEQUENCE_EDITOR="${rebaseScript}" git rebase -i origin/master`, {
+            shell: true,
+            cwd: root,
+            stdio: 'inherit'
+        });
+        
+        rebaseProcess.on('exit', () => {
+            res(true);
+        });
+
+        rebaseProcess.on('close', () => {
+            res(true);
+        });
+    })
+}
+
+function completeRebaseSync(root: string) {
+    return new Promise<boolean>((res) => {
+        console.log(chalk.magentaBright('Starting Sync...'));
+
+        const rebaseProcess = spawn(`git push`, {
             shell: true,
             cwd: root,
             stdio: 'inherit'
