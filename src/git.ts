@@ -75,7 +75,7 @@ export function getGitDetails(dir?: string): IGitDetails | undefined  {
     
     const autoRebase = async (message: string) => {
         await completeAutoRebase(details.root, message);
-        await gitPromise(git, 'rebase', '--continue');
+        // await gitPromise(git, 'rebase', '--continue');
     }
 
     return {
@@ -95,42 +95,47 @@ export function getGitDetails(dir?: string): IGitDetails | undefined  {
 
 function completeAutoRebase(root: string, newMessage: string) {
     return new Promise<boolean>((res) => {
-        console.log('Starting rebase');
-        const rebaseProcess = spawn('git rebase -i origin/master', {
-            shell: true,
-            cwd: root
-        });
+        console.log(path.join(__dirname, './rebase.js'));
+        // console.log('Starting rebase');
+        // const rebaseProcess = spawn(`GIT_SEQUENCE_EDITOR="node ${path.join(__dirname, './rebase.js')}" git rebase -i origin/master`, {
+        //     shell: true,
+        //     cwd: root
+        // });
         
-        console.log('Process Began');
+        // rebaseProcess.stdout.on('data', (data) => {
+        //     console.log('CMD: ' + data.toString());
+        // })
+        // console.log('Process Began');
+        res(false);
         
-        setTimeout(() => {
-            console.log('Manual Editing Started');
-            rebaseProcess.kill('SIGHUP');
-            const rebaseFile = path.join(root, './.git/rebase-merge/git-rebase-todo');
-            // const rebaseFile = path.join(root, './test');
-            if (!existsSync(rebaseFile)) res(false);
-            console.log('File Found');
-            const file = readFileSync(rebaseFile).toString();
+        // setTimeout(() => {
+        //     console.log('Manual Editing Started');
+        //     rebaseProcess.kill('SIGHUP');
+        //     const rebaseFile = path.join(root, './.git/rebase-merge/git-rebase-todo');
+        //     // const rebaseFile = path.join(root, './test');
+        //     if (!existsSync(rebaseFile)) res(false);
+        //     console.log('File Found');
+        //     const file = readFileSync(rebaseFile).toString();
 
-            const lines = file.split('\n');
-            for (let i = 0; i < lines.length; i++) {
-                const line = lines[i];
-                let rephrased = '';
+        //     const lines = file.split('\n');
+        //     for (let i = 0; i < lines.length; i++) {
+        //         const line = lines[i];
+        //         let rephrased = '';
                 
-                if (i === 0) {
-                    const lineSplit = line.split(' ');
-                    rephrased = `${lineSplit[0]} ${lineSplit[1]} ${newMessage}`;
-                } else if (line.trim() == '') {
-                    continue;
-                } else {
-                    rephrased = line.replace('pick', 'fixup');
-                }
+        //         if (i === 0) {
+        //             const lineSplit = line.split(' ');
+        //             rephrased = `${lineSplit[0]} ${lineSplit[1]} ${newMessage}`;
+        //         } else if (line.trim() == '') {
+        //             continue;
+        //         } else {
+        //             rephrased = line.replace('pick', 'fixup');
+        //         }
 
-                lines[i] = rephrased;
-            }
+        //         lines[i] = rephrased;
+        //     }
 
-            writeFileSync(rebaseFile, lines.join('\n'));
-            res(true);
-        }, 1000);
+        //     writeFileSync(rebaseFile, lines.join('\n'));
+        //     res(true);
+        // }, 1000);
     })
 }
