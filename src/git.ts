@@ -86,7 +86,7 @@ export function getGitDetails(dir?: string): IGitDetails | undefined  {
         console.log(chalk.cyanBright('Update Complete.'));
         
         console.log(chalk.magentaBright('Syncing...'));
-        await gitPromise(git, 'push', 'origin', `${details.branch}:${details.branch}`);
+        await push();
         console.log(chalk.cyanBright('Completed Syncing.'));
         // await gitPromise(git, 'pull', '--rebase', 'origin', 'master');
     }
