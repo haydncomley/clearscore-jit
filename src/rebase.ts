@@ -11,12 +11,13 @@ const commitMessage = fs.readFileSync(path.join(__dirname, './jit-name-file.txt'
 console.log('EDITING:: ' + gitTodoFile);
 
 const lines = gitData.split(os.EOL);
+console.log(lines.join(os.EOL))
 
 if (lines[0].startsWith('pick')) {
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i].trim();
         if (i === 0) {
-            const lineSplit = line[i].split(os.EOL);
+            const lineSplit = line[i].split(' ');
             lines[i] = `pick ${lineSplit[1]} ${commitMessage}`
         } else {
             lines[i] = line.replace('pick', 'fixup');
