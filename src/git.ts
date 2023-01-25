@@ -103,7 +103,7 @@ function completeAutoRebase(root: string, newMessage: string) {
         console.log(path.join(__dirname, './rebaseScript.sh'));
         console.log('Starting rebase');
 
-        const rebaseProcess = spawn(`GIT_SEQUENCE_EDITOR="${path.join(__dirname, './test.sh')}" git rebase -i origin/master --autosquash`, {
+        const rebaseProcess = spawn(`GIT_SEQUENCE_EDITOR="${path.join(__dirname, './rebaseScript.sh')}" git rebase -i origin/master --autosquash`, {
             shell: true,
             cwd: root
         });
