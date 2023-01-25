@@ -18,7 +18,7 @@ export function whichDevelopmentStage() {
         { title: `Quick Commit ${chalk.grey('(quickly push code while developing)')}`, value: 'commitQuick'},
         { title: `Full Commit ${chalk.grey('(create a commit ready for a PR)')}`, value: 'commitFull'},
         { title: `New Branch ${chalk.grey('(to develop a new feature/fix)')}`, value: 'branchNew'},
-        { title: `Squash Changes ${chalk.yellow('[EXPERIMENTAL]')} ${chalk.grey('(compile all commits into one for a PR)')}`, value: 'squash'},
+        { title: `Squash Changes ${chalk.yellow('[BUGGY]')} ${chalk.grey('(compile all commits into one for a PR)')}`, value: 'squash'},
     ]);
 }
 
@@ -43,7 +43,8 @@ export function whichPackageName() {
         type: 'text',
         name: 'packageName',
         message: `Package/Update Name ${chalk.grey('(e.g. webapp.products)')}`,
-        format: (value: string) => value.toLowerCase().trim()
+        format: (value: string) => value.toLowerCase().trim(),
+        validate: (value: string) => value.length > 0 ? true : 'Please enter a package/update name'
     } as PromptObject;
 }
 

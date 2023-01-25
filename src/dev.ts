@@ -41,6 +41,8 @@ async function doQuickCommit() {
     const { commitMessage } = await askQuestions([
         whichCommitMessage(),
     ]);
+
+    if (!commitMessage)  process.exit(1);
     
     await git.commit(commitMessage);
     
@@ -63,6 +65,8 @@ async function doFullCommit() {
         whichBreakingChangesMade()
     ]);
 
+    if (!commitType || !packageName || !commitMessage || !jiraTicket)  process.exit(1);
+
     await git.commitWithDetails(commitType, packageName, commitMessage, jiraTicket, breakingChanges);
     
     const shouldPush = await askConfirm('Do you also want to push?');
@@ -80,6 +84,8 @@ async function doNewBranch() {
         whichCommitType(),
         whichBranchName(),
     ]);
+
+    if (!commitType || !branchName)  process.exit(1);
     
     await git.newBranch(`${commitType}/${branchName}`);
     done();
@@ -88,16 +94,17 @@ async function doNewBranch() {
 async function doSquash() {
     const git = getGitDetails();
 
-    const { commitMessage, commitType, jiraTicket, packageName, breakingChanges } = await askQuestions([
+    const { commitMessage, commitType, packageName, jiraTicket } = await askQuestions([
         whichCommitType(),
-        // whichJiraTicket(),
+        whichJiraTicket(),
         whichPackageName(),
         whichCommitMessage(),
-        // whichBreakingChangesMade()
     ]);
 
-    const newMessage = `${commitType}(${packageName}): ${commitMessage}`;
-    // ""``
+    if (!commitType || !packageName || !commitMessage || !jiraTicket)  process.exit(1);
 
-    git.autoRebase(newMessage);
+    const newMessage = `${commitType}(${packageName}): ${commitMessage}`;
+
+    await git.autoRebase(newMessage, jiraTicket);
+    done();
 }

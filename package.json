@@ -6,6 +6,7 @@
   "bin": "bin/index.js",
   "scripts": {
     "build": "node ./build.js",
+    "serve": "yarn build && node ./bin/index.js",
     "start": "ts-node-dev --exit-child ./src/index.ts"
   },
   "keywords": [],
