@@ -96,9 +96,10 @@ export function getGitDetails(dir?: string): IGitDetails | undefined  {
 
 function completeAutoRebase(root: string, newMessage: string) {
     return new Promise<boolean>((res) => {
-        console.log(path.join(__dirname, './rebase.js'));
-        // console.log('Starting rebase');
-        const rebaseProcess = spawn(`GIT_SEQUENCE_EDITOR="node ${path.join(__dirname, './rebase.js')}" git rebase -i origin/master`, {
+        console.log(path.join(__dirname, './test.sh'));
+        console.log('Starting rebase');
+
+        const rebaseProcess = spawn(`GIT_SEQUENCE_EDITOR="${path.join(__dirname, './test.sh')}" git rebase -i origin/master`, {
             shell: true,
             cwd: root
         });
@@ -114,7 +115,7 @@ function completeAutoRebase(root: string, newMessage: string) {
             }
             process.exit(1);
         })
-        res(false);
+        // res(false);
         
         // setTimeout(() => {
         //     console.log('Manual Editing Started');

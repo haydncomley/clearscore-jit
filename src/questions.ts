@@ -43,7 +43,8 @@ export function whichPackageName() {
         type: 'text',
         name: 'packageName',
         message: `Package/Update Name ${chalk.grey('(e.g. webapp.products)')}`,
-        format: (value: string) => value.toLowerCase().trim()
+        format: (value: string) => value.toLowerCase().trim(),
+        validate: (value: string) => value.length > 0 ? true : 'Please enter a package/update name'
     } as PromptObject;
 }
 

@@ -94,13 +94,13 @@ async function doNewBranch() {
 async function doSquash() {
     const git = getGitDetails();
 
-    const { commitMessage, commitType, jiraTicket, packageName } = await askQuestions([
+    const { commitMessage, commitType, packageName } = await askQuestions([
         whichCommitType(),
         whichPackageName(),
         whichCommitMessage(),
     ]);
 
-    if (!commitType || !packageName || !commitMessage || !jiraTicket)  process.exit(1);
+    if (!commitType || !packageName || !commitMessage)  process.exit(1);
 
     const newMessage = `${commitType}(${packageName}): ${commitMessage}`;
 
