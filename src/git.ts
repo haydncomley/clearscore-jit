@@ -103,7 +103,7 @@ function completeAutoRebase(root: string, newMessage: string) {
         console.log(path.join(__dirname, './rebaseScript.sh'));
         console.log('Starting rebase');
 
-        const rebaseProcess = spawn(`GIT_SEQUENCE_EDITOR="${path.join(__dirname, './rebaseScript.sh')}" git rebase -i origin/master --autosquash`, {
+        const rebaseProcess = spawn(`GIT_SEQUENCE_EDITOR="${path.join(__dirname, './rebaseScript.sh')}" git rebase -i origin/master`, {
             shell: true,
             cwd: root
         });
@@ -119,36 +119,5 @@ function completeAutoRebase(root: string, newMessage: string) {
             }
             process.exit(1);
         })
-        // res(false);
-        
-        // setTimeout(() => {
-        //     console.log('Manual Editing Started');
-        //     rebaseProcess.kill('SIGHUP');
-        //     const rebaseFile = path.join(root, './.git/rebase-merge/git-rebase-todo');
-        //     // const rebaseFile = path.join(root, './test');
-        //     if (!existsSync(rebaseFile)) res(false);
-        //     console.log('File Found');
-        //     const file = readFileSync(rebaseFile).toString();
-
-        //     const lines = file.split('\n');
-        //     for (let i = 0; i < lines.length; i++) {
-        //         const line = lines[i];
-        //         let rephrased = '';
-                
-        //         if (i === 0) {
-        //             const lineSplit = line.split(' ');
-        //             rephrased = `${lineSplit[0]} ${lineSplit[1]} ${newMessage}`;
-        //         } else if (line.trim() == '') {
-        //             continue;
-        //         } else {
-        //             rephrased = line.replace('pick', 'fixup');
-        //         }
-
-        //         lines[i] = rephrased;
-        //     }
-
-        //     writeFileSync(rebaseFile, lines.join('\n'));
-        //     res(true);
-        // }, 1000);
     })
 }
