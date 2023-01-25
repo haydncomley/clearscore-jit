@@ -1,3 +1,4 @@
+import chalk from "chalk";
 import { spawn } from "child_process";
 import { existsSync, readFileSync, readSync, writeFileSync } from "fs";
 import gitRepoInfo from "git-repo-info";
@@ -97,15 +98,22 @@ function completeAutoRebase(root: string, newMessage: string) {
     return new Promise<boolean>((res) => {
         console.log(path.join(__dirname, './rebase.js'));
         // console.log('Starting rebase');
-        // const rebaseProcess = spawn(`GIT_SEQUENCE_EDITOR="node ${path.join(__dirname, './rebase.js')}" git rebase -i origin/master`, {
-        //     shell: true,
-        //     cwd: root
-        // });
+        const rebaseProcess = spawn(`GIT_SEQUENCE_EDITOR="node ${path.join(__dirname, './rebase.js')}" git rebase -i origin/master`, {
+            shell: true,
+            cwd: root
+        });
         
-        // rebaseProcess.stdout.on('data', (data) => {
-        //     console.log('CMD: ' + data.toString());
-        // })
-        // console.log('Process Began');
+        rebaseProcess.stdout.on('data', (data) => {
+            console.log('CMD: ' + data.toString());
+        })
+        rebaseProcess.stderr.on('data', (data) => {
+            if (data.toString().includes('You have unstaged changes')) {
+                console.error(chalk.red('You have unstaged changes. Make sure you commit or stash before trying to rebase.'));
+            } else {
+                console.error(data.toString());
+            }
+            process.exit(1);
+        })
         res(false);
         
         // setTimeout(() => {
