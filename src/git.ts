@@ -96,8 +96,11 @@ export function getGitDetails(dir?: string): IGitDetails | undefined  {
 
 function completeAutoRebase(root: string, newMessage: string) {
     return new Promise<boolean>((res) => {
-        console.log(path.join(__dirname, './rebaseScript.sh'));
         console.log('Starting rebase');
+
+        const nameFile = path.join(__dirname, './jit-name-file.txt');
+        if (existsSync(nameFile)) rmSync(nameFile);
+        writeFileSync(nameFile, newMessage);
 
         const rebaseProcess = spawn(`GIT_SEQUENCE_EDITOR="${path.join(__dirname, './rebaseScript.sh')}" git rebase -i origin/master`, {
             shell: true,
