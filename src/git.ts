@@ -114,9 +114,9 @@ function completeAutoRebase(root: string, newMessage: string) {
             console.log('CMD: ' + data.toString());
             if (data.toString().includes('Done')) {
                 console.log('Finished Rebase');
-                res(true);
             }
         })
+        
         rebaseProcess.stderr.on('data', (data) => {
             if (data.toString().includes('You have unstaged changes')) {
                 console.error(chalk.red('You have unstaged changes. Make sure you commit or stash before trying to rebase.'));
@@ -125,5 +125,10 @@ function completeAutoRebase(root: string, newMessage: string) {
             }
             process.exit(1);
         })
+        
+        rebaseProcess.on('close', () => {
+            console.log('Rebase Closed')
+            res(true);
+        });
     })
 }
