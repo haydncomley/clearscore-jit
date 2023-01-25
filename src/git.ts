@@ -96,10 +96,6 @@ export function getGitDetails(dir?: string): IGitDetails | undefined  {
 
 function completeAutoRebase(root: string, newMessage: string) {
     return new Promise<boolean>((res) => {
-        const nameFile = path.join(__dirname, './jit-name-file');
-        if (existsSync(nameFile)) rmSync(nameFile);
-        writeFileSync(nameFile, newMessage);
-
         console.log(path.join(__dirname, './rebaseScript.sh'));
         console.log('Starting rebase');
 
