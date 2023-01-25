@@ -18,7 +18,7 @@ export function whichDevelopmentStage() {
         { title: `Quick Commit ${chalk.grey('(quickly push code while developing)')}`, value: 'commitQuick'},
         { title: `Full Commit ${chalk.grey('(create a commit ready for a PR)')}`, value: 'commitFull'},
         { title: `New Branch ${chalk.grey('(to develop a new feature/fix)')}`, value: 'branchNew'},
-        { title: `Squash Changes ${chalk.yellow('[TESTING]')} ${chalk.grey('(compile all commits into one for a PR)')}`, value: 'squash'},
+        { title: `Auto Squish ${chalk.grey('(squash all commits into one ready for a PR)')}`, value: 'squash'},
     ]);
 }
 

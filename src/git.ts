@@ -133,7 +133,7 @@ function completeRebaseSync(root: string) {
     return new Promise<boolean>((res) => {
         console.log(chalk.magentaBright('Starting Sync...'));
 
-        const rebaseProcess = spawn(`git push`, {
+        const rebaseProcess = spawn(`git push -f`, {
             shell: true,
             cwd: root,
             stdio: 'inherit'
