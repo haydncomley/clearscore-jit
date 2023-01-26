@@ -5,6 +5,7 @@ import gitRepoInfo from "git-repo-info";
 import path from "path";
 import { GitError, SimpleGit, simpleGit, SimpleGitBase, SimpleGitTaskCallback } from "simple-git";
 import treeKill from "tree-kill";
+import { askConfirm, askQuestions } from "./questions";
 
 interface IGitDetails {
     branchName: string,
@@ -76,17 +77,20 @@ export function getGitDetails(dir?: string): IGitDetails | undefined  {
 
     
     const autoRebase = async (message: string, ticket: string, isBreaking?: string) => {
-        // await gitPromise(git, 'config', 'pull.rebase', 'true');
         await completeAutoRebase(details.root, message);
         console.log(chalk.cyanBright('Rebase Complete.'));
 
-        console.log(chalk.magentaBright('Updating Commit Message (this can take a minute because of NX/husky)...'));
+        console.log(chalk.magentaBright('Updating Commit Message (this can take a minute because of nx/husky)...'));
         if (!isBreaking) await gitPromise(git, 'commit', '--amend', '-am', `${message}`, '-m', ticket);
         else await gitPromise(git, 'commit', '--amend', '-am', `${message}`, '-m', ticket), '-m', `"BREAKING CHANGE: ${isBreaking}"`;
-        console.log(chalk.cyanBright('Update Complete.'));
         
-        await completeRebaseSync(details.root);
-        console.log(chalk.cyanBright('Completed Syncing.'));
+        const shouldPush = await askConfirm('Do you also want to force push?');
+        if (shouldPush) {
+            await completeRebaseSync(details.root);
+            console.log(chalk.cyanBright('Completed Syncing.'));
+        } else {
+            console.log(chalk.cyanBright('ℹ️ Force Push "Squashed Branch": git push -f'));
+        }
     }
 
     return {
@@ -118,6 +122,8 @@ function completeAutoRebase(root: string, newMessage: string) {
             cwd: root,
             stdio: 'inherit'
         });
+
+        rebaseProcess.on('error', () => process.exit(1));
         
         rebaseProcess.on('exit', () => {
             res(true);
@@ -138,6 +144,8 @@ function completeRebaseSync(root: string) {
             cwd: root,
             stdio: 'inherit'
         });
+
+        rebaseProcess.on('error', () => process.exit(1));
         
         rebaseProcess.on('exit', () => {
             res(true);
