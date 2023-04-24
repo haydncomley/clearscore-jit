@@ -1,0 +1,76 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "root": true,
+  "ignorePatterns": ["public"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": false
+    },
+    "ecmaVersion": "latest"
+  },
+  "plugins": [
+    "@typescript-eslint",
+    "sort-keys-fix",
+    "unused-imports",
+    "simple-import-sort",
+    "destructuring-newline"
+  ],
+  "rules": {
+    "indent": ["error", 4],
+    "quotes": ["error", "single"],
+    "semi": ["error", "always"],
+    "keyword-spacing": ["error"],
+    "@typescript-eslint/no-empty-interface": "off",
+    "sort-keys-fix/sort-keys-fix": [
+      "error",
+      "asc",
+      {
+        "caseSensitive": false,
+        "natural": true
+      }
+    ],
+    "space-before-blocks": "error",
+    "block-spacing": "error",
+    "object-curly-spacing": ["error", "always"],
+    "array-bracket-spacing": ["error", "always"],
+    "unused-imports/no-unused-imports": "error",
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error",
+    "no-empty-pattern": "off",
+    "comma-dangle": ["error", "always-multiline"],
+    "no-multiple-empty-lines": ["error", {
+      "max": 1
+    }],
+    "eol-last": "error",
+    "object-curly-newline": ["error", {
+      "multiline": true
+    }],
+    "destructuring-newline/object-property-newline": ["error"],
+    "@typescript-eslint/member-delimiter-style": ["error"],
+    "@typescript-eslint/space-before-blocks": ["error", "always"]
+  },
+  "overrides": [
+    {
+      "files": ["*.ts"],
+      "rules": {
+        "simple-import-sort/imports": [
+          "error",
+          {
+            "groups": [
+              // Parent imports. Put `..` last.
+              ["^\\.\\.(?!/?$)", "^\\.\\./?$"],
+              // Other relative imports. Put same-folder imports and `.` last.
+              ["^\\./(?=.*/)(?!/?$)", "^\\.(?!/?$)", "^\\./?$"],
+              // Style imports.
+              ["^.+\\.?(css)$"]
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
