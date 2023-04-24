@@ -1,6 +1,6 @@
 import { OnError, OnInfo, OnSuccess } from '../core/display';
 import { findChangedPackages, useGit } from '../core/git';
-import { askConfirm, askQuestions, whichBreakingChangesMade, whichCommitMessage, whichJiraTicket, whichPackageJsonName } from '../questions/questions';
+import { askConfirm, askQuestions, selectCommitType, whichBreakingChangesMade, whichCommitMessage, whichJiraTicket, whichPackageJsonName } from '../questions/questions';
 
 export const ProcessFormattedCommit = async () => {
     const git = useGit();
@@ -12,8 +12,7 @@ export const ProcessFormattedCommit = async () => {
     await git.stage();
 
     OnInfo('All outstanding changes have been staged.');
-    const branchName = await git.branchName();
-    const commitType = branchName.split('/')[0];
+    const commitType = await selectCommitType();
     const packageOptions = await findChangedPackages();
 
     const {

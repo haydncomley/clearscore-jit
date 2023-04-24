@@ -1,6 +1,6 @@
 import { OnInfo, OnSuccess } from '../core/display';
 import { findChangedPackages, useGit } from '../core/git';
-import { askConfirm, askQuestions, whichCommitMessage, whichJiraTicket, whichPackageJsonName } from '../questions/questions';
+import { askConfirm, askQuestions, selectCommitType, whichCommitMessage, whichJiraTicket, whichPackageJsonName } from '../questions/questions';
 
 export const ProcessAutoSquash = async () => {
     const git = useGit();
@@ -14,8 +14,7 @@ export const ProcessAutoSquash = async () => {
         else process.exit(0);
     }
 
-    const branchName = await git.branchName();
-    const commitType = branchName.split('/')[0];
+    const commitType = await selectCommitType();
     const packageOptions = await findChangedPackages();
 
     const {

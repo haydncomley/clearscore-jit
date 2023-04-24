@@ -1,4 +1,5 @@
 import { selectConfirm, selectDirectory, selectFromList, selectTicketNumber } from '../../lib/questions/questions-primitives';
+import { useGit } from '../core/git';
 
 import chalk from 'chalk';
 import prompts, { PromptObject } from 'prompts';
@@ -22,6 +23,17 @@ export function whichDevelopmentStage() {
         { title: `Quick Commit ${chalk.grey('(quickly push code while developing)')}`, value: 'commitQuick' },
         { title: `Auto Squish ${chalk.grey('(a semi-automated squash)')}`, value: 'squash' },
     ]);
+}
+
+export async function selectCommitType() {
+    const git = useGit();
+    const branchName = await git.branchName();
+    const commitType = branchName.split('/')[0];
+    if ([ 'fix', 'chore', 'feat' ].includes(commitType)) return commitType;
+    else {
+        const { commitType: commitTypeSelected } = await askQuestions([ whichCommitType() ]);
+        return commitTypeSelected;
+    }
 }
 
 export function whichCommitType() {
