@@ -40,15 +40,18 @@ export function selectDirectory(id: string, title: string) {
 
 export function selectTicketNumber(id: string, title: string) {
     return {
-        format: value => (value as string).toUpperCase().trim(),
-        hint: 'e.g. XX-1234',
+        format: value => {
+            const regex = /\w+-.+/gm;
+            return (value as string).match(regex)[0].toUpperCase().trim();
+        },
+        hint: 'e.g. CS-12345 or https://clearscore.atlassian.net/browse/CS-12345',
         instructions: false,
         message: title,
         name: id,
         type: 'text',
         validate: value => {
-            const regex = /.+-.+/gm;
-            return (value as string).match(regex) ? true : 'Invalid Ticket Format';
+            const regex = /\w+-.+/gm;
+            return (value as string).match(regex) ? true : 'Invalid Format - Provide either ticket or Jira URL';
         },
     } as PromptObject;
 }
