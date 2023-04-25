@@ -16,7 +16,6 @@ export async function askConfirm(message: string, initial = true) {
 }
 
 export function whichDevelopmentStage() {
-    console.log('Hello');
     return selectFromList('developmentStage', 'What do you want to do?', [
         { title: `New Branch ${chalk.grey('(create a new branch)')}`, value: 'branchNew' },
         { title: `Formatted Commit ${chalk.grey('(create a commit ready for a PR)')}`, value: 'commitFull' },
