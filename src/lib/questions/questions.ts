@@ -21,6 +21,7 @@ export function whichDevelopmentStage() {
         { title: `Formatted Commit ${chalk.grey('(create a commit ready for a PR)')}`, value: 'commitFull' },
         { title: `Quick Commit ${chalk.grey('(quickly push code while developing)')}`, value: 'commitQuick' },
         { title: `Auto Squish ${chalk.grey('(a semi-automated squash)')}`, value: 'squash' },
+        { title: `Checkout Main/Master ${chalk.grey('(back to a clean slate)')}`, value: 'checkoutMaster' },
     ]);
 }
 

@@ -64,6 +64,12 @@ export function useGit(dir?: string) {
         await rebase(message);
         await amendCommit(message, ticket, isBreaking);
     };
+    const checkout = async (branch: string) => {
+        await wrapGit(details.root, `git checkout ${branch}`);
+    };
+    const pull = async () => {
+        await wrapGit(details.root, 'git pull');
+    };
     const rebase = async (message: string) => {
         OnInfo('Rebasing...');
         const rebaseScript = path.join(__dirname, './lib/core/rebaseScript.sh');
@@ -80,12 +86,14 @@ export function useGit(dir?: string) {
         autoRebase,
         branchName,
         changedFiles, 
+        checkout,
         clean,
         createBranch,
         fetch,
         fullCommit,
         fullPush,
         hasOutStandingChanges,
+        pull,
         quickCommit,
         quickPush,
         rebase,
