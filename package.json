@@ -33,7 +33,6 @@
     "dotenv": "^16.0.3",
     "git-repo-info": "^2.1.1",
     "prompts": "^2.4.2",
-    "simple-git": "^3.16.0",
-    "tree-kill": "^1.2.2"
+    "simple-git": "^3.16.0"
   }
 }

@@ -1716,7 +1716,6 @@ __metadata:
     git-repo-info: "npm:^2.1.1"
     prompts: "npm:^2.4.2"
     simple-git: "npm:^3.16.0"
-    tree-kill: "npm:^1.2.2"
     ts-node-dev: "npm:^2.0.0"
     typescript: "npm:^4.9.4"
     typescript-eslint: "npm:^0.0.1-alpha.0"
