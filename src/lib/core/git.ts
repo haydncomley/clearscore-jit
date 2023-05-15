@@ -120,7 +120,7 @@ export function attachProcess(root: string, command: string) {
 export const findChangedPackages = async () => {
     const git = useGit();
     const fileChanges = await git.changedFiles();
-    return [ findRelevantPackages(fileChanges), 'repo' ];
+    return [ ...findRelevantPackages(fileChanges), 'repo' ];
 };
 
 const findRelevantPackages = (files: string[]) => {
