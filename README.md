@@ -6,7 +6,7 @@ This is a just a simple tool for formatting and wrapping common git commands. It
 ## Usage / Features
 
 ### Installation
-1. Install: `npm i -g https://github.com/haydncomley/clearscore-jit`
+1. Install: `npm install -g --save https://github.com/haydncomley/clearscore-jit/tarball/master`
 2. Start: `jit`
 
 ### New Branch
