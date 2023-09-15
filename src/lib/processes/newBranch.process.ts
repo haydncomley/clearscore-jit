@@ -24,5 +24,5 @@ export const ProcessNewBranch = async () => {
     
     const newBranchName = `${commitType}/${branchName}`;
     await git.createBranch(newBranchName);
-    OnSuccess(`Branch "${chalk.bold(newBranchName)}" created.`);
+    OnSuccess(`Branch "${chalk.bold(newBranchName)}" created.`, true);
 };

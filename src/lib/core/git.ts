@@ -1,4 +1,6 @@
 
+import { askConfirm } from '../questions/questions';
+
 import { OnError, OnInfo, OnSuccess } from './display';
 
 import { execSync, spawn } from 'child_process';
@@ -21,11 +23,12 @@ function gitPromise(git: SimpleGit, ...commands: string[]) {
     });
 }
 
-async function wrapGit(root: string, command: string) {
+async function wrapGit(root: string, command: string, suppressOutput?: boolean) {
     try {
-        await attachProcess(root, command);
-    } catch {
+        return await attachProcess(root, command, suppressOutput);
+    } catch (error) {
         OnError('Something went wrong with git - check output for more details.');
+        return String(error);
     }
 }
 
@@ -37,17 +40,24 @@ export function useGit(dir?: string) {
 
     const stage = () => wrapGit(details.root, 'git add .');
     const quickCommit = (message: string) => wrapGit(details.root, `git commit -m "${message}" --no-verify`);
+    const retroCommit = async (message: string, ticket: string) => {
+        await wrapGit(details.root, `git commit -am "${message}" -m "${ticket} --no-verify"`);
+    };
     const fullCommit = async (type: string, product: string, message: string, ticket: string, isBreaking?: string) => {
         let command = `git commit -am "${type}(${product}): ${message}" -m "${ticket}"`;
         if (isBreaking) command += ` -m "BREAKING CHANGE: ${isBreaking}"`;
         await wrapGit(details.root, command);
     };
-    const amendCommit = async (message: string, ticket: string, isBreaking?: string) => {
+    const amendCommit = async (message: string, ticket: string, isBreaking?: string, force?: boolean) => {
         OnInfo('Updating Ticket Info...');
         let command = `git commit --amend -am "${message}" -m "${ticket}"`;
         if (isBreaking) command += ` -m "BREAKING CHANGE: ${isBreaking}"`;
-        await wrapGit(details.root, command);
-        OnSuccess('Ticket Details Amended.', true);
+        const result = await wrapGit(details.root, command);
+        if (result.includes('scope must be one')) {
+            OnError('Failed to amend commit. Check above for more details.');
+        } else {
+            OnSuccess('Ticket Details Amended.', true);
+        }
     };
     const quickPush = (branch?: string) => wrapGit(details.root, `git push --set-upstream origin ${branch || details.branch} -f --no-verify`);
     const fullPush = (branch?: string) => wrapGit(details.root, `git push --set-upstream origin ${branch || details.branch} -f`);
@@ -77,19 +87,39 @@ export function useGit(dir?: string) {
         if (existsSync(nameFile)) rmSync(nameFile);
         writeFileSync(nameFile, message);
 
-        await wrapGit(details.root, `git fetch && GIT_SEQUENCE_EDITOR="${rebaseScript}" git rebase -i origin/master`);
-        OnSuccess('Rebase Complete.', true);
+        const result = await wrapGit(details.root, `git fetch && GIT_SEQUENCE_EDITOR="${rebaseScript}" git rebase -i origin/master`);
+        if (result.includes('Successfully rebased and updated')) {
+            OnSuccess('Rebase Complete.', true);
+        } else {
+            OnError('Rebase Failed. Check above (you probably have some conflicts)', true);
+            OnInfo('If you have conflicts quickly go resolve them, then continue when ready :)');
+            const rebaseContinue = askConfirm('Do you want to continue with the rebase?');
+            if (rebaseContinue) await wrapGit(details.root, `GIT_SEQUENCE_EDITOR="${rebaseScript}" git rebase --continue`);
+        }
+    };
+
+    const findLastCommitDetails = async () => {
+        const message = (await wrapGit(details.root, 'git log -1 | sed', true)).split('\n').map((x) => x.trim()).filter(Boolean);
+        const ticket = message.pop().trim();
+        const commitMessage = message.slice(3).join('\n');
+        return { commitMessage, ticket };
+    };
+
+    const bringCommitBackToStaging = async () => {
+        await wrapGit(details.root, 'git reset --soft HEAD^1');
     };
 
     return {
         amendCommit,
         autoRebase,
         branchName,
-        changedFiles, 
+        bringCommitBackToStaging, 
+        changedFiles,
         checkout,
         clean,
         createBranch,
         fetch,
+        findLastCommitDetails,
         fullCommit,
         fullPush,
         hasOutStandingChanges,
@@ -97,23 +127,35 @@ export function useGit(dir?: string) {
         quickCommit,
         quickPush,
         rebase,
+        retroCommit,
         root: details.root,
         stage,
     };
 }
 
-export function attachProcess(root: string, command: string) {
-    return new Promise<void>((res, rej) => {
+export function attachProcess(root: string, command: string, suppressOutput?: boolean) {
+    return new Promise<string>((res, rej) => {
         const spawnedProcess = spawn(command, {
             cwd: root,
             shell: true,
-            stdio: 'inherit',
+            stdio: [ 'inherit', 'pipe', 'pipe' ],
+        });
+        let message = '';
+
+        spawnedProcess.stdout.on('data', (data) => {
+            message = message + data.toString();
+            if (!suppressOutput) process.stdout.write(data);
+        });
+        
+        spawnedProcess.stderr.on('data', (data) => {
+            message = message + data.toString();
+            if (!suppressOutput) process.stderr.write(data);
         });
 
-        spawnedProcess.on('close', () => res());
-        spawnedProcess.on('disconnect', () => res());
-        spawnedProcess.on('exit', () => res());
-        spawnedProcess.on('error', () => rej());
+        spawnedProcess.on('close', () => res(message));
+        spawnedProcess.on('disconnect', () => res(message));
+        spawnedProcess.on('exit', (code) => res(code === 1 ? `error:${code}:${message}` : message));
+        spawnedProcess.on('error', (error) => rej(`error:${error.message}`));
     });
 }
 

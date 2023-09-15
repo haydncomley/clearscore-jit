@@ -1,5 +1,6 @@
 import { selectConfirm, selectDirectory, selectFromList, selectTicketNumber } from '../../lib/questions/questions-primitives';
 import { useGit } from '../core/git';
+import { IsTesting } from '../core/test';
 
 import chalk from 'chalk';
 import prompts, { PromptObject } from 'prompts';
@@ -16,13 +17,17 @@ export async function askConfirm(message: string, initial = true) {
 }
 
 export function whichDevelopmentStage() {
+    
     return selectFromList('developmentStage', 'What do you want to do?', [
-        { title: `New Branch ${chalk.grey('(create a new branch)')}`, value: 'branchNew' },
-        { title: `Formatted Commit ${chalk.grey('(create a commit ready for a PR)')}`, value: 'commitFull' },
-        { title: `Quick Commit ${chalk.grey('(quickly push code while developing)')}`, value: 'commitQuick' },
-        { title: `Auto Squish ${chalk.grey('(a semi-automated squash)')}`, value: 'squash' },
-        { title: `Checkout Main/Master ${chalk.grey('(back to a clean slate)')}`, value: 'checkoutMaster' },
-    ]);
+        { title: `${chalk.cyanBright('Branch - New ')}${chalk.grey('(create a new branch)')}`, value: 'branchNew' },
+        { title: `${chalk.magentaBright('Commit - Formatted ')}${chalk.grey('(create a commit ready for a PR)')}`, value: 'commitFull' },
+        { title: `${chalk.magentaBright('Commit - Retro ')}${chalk.grey('(force push current changes on-top of the last commit)')}`, value: 'commitRetro' },
+        { title: `${chalk.magentaBright('Commit - Dev ')}${chalk.grey('(quickly push code while developing)')}`, value: 'commitQuick' },
+        { title: `${chalk.greenBright('Squish ')}${chalk.grey('(a semi-automated squash with master)')}`, value: 'squash' },
+        { title: `${chalk.redBright('Reset Branch ')}${chalk.grey('(back to a clean slate from master)')}`, value: 'checkoutMaster' },
+    ].concat(IsTesting() ? [
+        { title: 'Echo?', value: 'test' },
+    ].map((x) => ({ ...x, title: `${chalk.yellowBright('[TEST]')} ${x.title}` })) : []));
 }
 
 export async function selectCommitType() {

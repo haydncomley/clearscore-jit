@@ -17,5 +17,5 @@ export const ProcessBackToMaster = async () => {
     }
 
     await git.pull();
-    OnSuccess('Done');
+    OnSuccess('Done', true);
 };

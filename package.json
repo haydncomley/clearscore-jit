@@ -5,9 +5,9 @@
   "main": "src/index.ts",
   "bin": "bin/index.js",
   "scripts": {
-    "build": "node ./build.js && chmod +x ./src/index.js",
+    "build": "node ./build.js && chmod +x ./bin/index.js",
     "serve": "yarn build && node ./bin/index.js",
-    "start": "ts-node-dev --exit-child ./src/index.ts"
+    "start": "IS_TEST=true ts-node-dev --exit-child ./src/index.ts"
   },
   "keywords": [],
   "author": "Haydn Comley <haydn.comley@clearscore.com>",

@@ -5,7 +5,8 @@ import { ProcessBackToMaster } from './lib/processes/backToMaster.process';
 import { ProcessFormattedCommit } from './lib/processes/formattedCommit.process';
 import { ProcessNewBranch } from './lib/processes/newBranch.process';
 import { ProcessQuickCommit } from './lib/processes/quickCommit.process';
-import { askQuestions, whichDevelopmentStage } from './lib/questions/questions';
+import { ProcessRetroCommit } from './lib/processes/retroCommit.process';
+import { askConfirm, askQuestions, whichDevelopmentStage } from './lib/questions/questions';
 
 import chalk from 'chalk';
 
@@ -33,6 +34,9 @@ async function run() {
     case 'commitFull':
         await ProcessFormattedCommit();
         break;
+    case 'commitRetro':
+        await ProcessRetroCommit();
+        break;
     case 'squash':
         await ProcessAutoSquash();
         break;
@@ -42,7 +46,13 @@ async function run() {
     case 'checkoutMaster':
         await ProcessBackToMaster();
         break;
+    case 'test':
+        console.log('ECHO ECHO ecHO echO echo...');
+        break;
     }
+
+    const wantsToRerun = await askConfirm('Jit Again?', true);
+    if (wantsToRerun) run();
 }
 
 run();
