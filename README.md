@@ -33,3 +33,4 @@ This is a just a simple tool for formatting and wrapping common git commands. It
 > This one hopes to automate the process of squashing commits - if there are no conflicts then easy-peasy, one command and a message later you're done. If there are any conflicts just fix them up, re-run it and your should be good to go.
 
 ![Auto Squish Video](https://user-images.githubusercontent.com/9806346/234026477-fc3ff541-0ea0-42ed-af13-2fbf2a90c6b9.gif)
+
