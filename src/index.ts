@@ -15,13 +15,13 @@ import chalk from 'chalk';
 async function run() {
     process.stdout.cursorTo(0, 0);
     process.stdout.clearScreenDown();
-
+    
     const gitDetails = useGit();
     if (!gitDetails) OnError('Could not find a git repo.');
 
     DisplayBanner({
         color: chalk.green,
-        message: gitDetails.root,
+        message: `${gitDetails.root} @ ${await gitDetails.branchName()}`,
         title: `Jit (${version})`,
     });
 
