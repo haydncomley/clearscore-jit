@@ -41,7 +41,7 @@ export function useGit(dir?: string) {
     const stage = () => wrapGit(details.root, 'git add .');
     const quickCommit = (message: string) => wrapGit(details.root, `git commit -m "${message}" --no-verify`);
     const retroCommit = async (message: string, ticket: string) => {
-        await wrapGit(details.root, `git commit -am "${message}" -m "${ticket} --no-verify"`);
+        await wrapGit(details.root, `git commit -am "${message}" -m "${ticket}" --no-verify`);
     };
     const fullCommit = async (type: string, product: string, message: string, ticket: string, isBreaking?: string) => {
         let command = `git commit -am "${type}(${product}): ${message}" -m "${ticket}"`;
