@@ -61,7 +61,7 @@ export function whichDir() {
 }
 
 export function whichJiraTicket() {
-    return selectTicketNumber('jiraTicket', `Jira Ticket Number ${chalk.grey('(e.g. XX-1234)')}`);
+    return selectTicketNumber('jiraTicket', `Jira Ticket Number ${chalk.grey('(e.g. XX-XXXX or Jira Ticket URL)')}`);
 }
 
 export function whichPackageName() {
