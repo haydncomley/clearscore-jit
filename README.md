@@ -24,6 +24,11 @@ This is a just a simple tool for formatting and wrapping common git commands. It
 
 ![Formatted PR Video](https://user-images.githubusercontent.com/9806346/234024256-4cfec3ce-0b74-4552-81fb-fa4552bd5108.gif)
 
+### Retrospective Commit
+> Sometimes you forgot that one thing on your branch like a dependency update or a small fix - this just pulls your last commit back to staging, commits your changes and then force pushes them up to the same branch.
+
+![Formatted PR Video](https://user-images.githubusercontent.com/9806346/234024256-4cfec3ce-0b74-4552-81fb-fa4552bd5108.gif)
+
 ### Auto-Squish
 > This one hopes to automate the process of squashing commits - if there are no conflicts then easy-peasy, one command and a message later you're done. If there are any conflicts just fix them up, re-run it and your should be good to go.
 
