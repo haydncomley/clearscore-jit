@@ -1,3 +1,5 @@
+import { version } from '../package.json';
+
 import { DisplayBanner, OnError } from './lib/core/display';
 import { useGit } from './lib/core/git';
 import { ProcessAutoSquash } from './lib/processes/autoSquash.process';
@@ -20,7 +22,7 @@ async function run() {
     DisplayBanner({
         color: chalk.green,
         message: gitDetails.root,
-        title: 'Active Repo',
+        title: `Jit (${version})`,
     });
 
     const { developmentStage } = await askQuestions([
