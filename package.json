@@ -32,6 +32,8 @@
     "chalk": "4.1.2",
     "dotenv": "^16.0.3",
     "git-repo-info": "^2.1.1",
+    "ioredis": "5.3.2",
+    "kodmq": "/Users/haydncomley/Repos/kodmq/packages/kodmq",
     "prompts": "^2.4.2",
     "simple-git": "^3.16.0"
   }

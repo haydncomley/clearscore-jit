@@ -14,23 +14,29 @@ export const ProcessAutoSquash = async () => {
         else process.exit(0);
     }
 
-    const commitType = await selectCommitType();
-    const packageOptions = await findChangedPackages();
+    const lastCommit = await git.findLastCommitDetails();
+    let message = lastCommit.commitMessage;
+    const ticket = lastCommit.ticket;
 
-    const {
-        commitMessage, 
-        packageJson, 
-        jiraTicket, 
-    } = await askQuestions([
-        whichJiraTicket(),
-        whichPackageJsonName(packageOptions),
-        whichCommitMessage(),
-    ]);
+    if (!lastCommit.commitMessage || !lastCommit.ticket) {
+        const commitType = await selectCommitType();
+        const packageOptions = await findChangedPackages();
+    
+        const {
+            commitMessage, 
+            packageJson, 
+            jiraTicket, 
+        } = await askQuestions([
+            whichJiraTicket(),
+            whichPackageJsonName(packageOptions),
+            whichCommitMessage(),
+        ]);
+        // OnError('Your last commit was not a formatted one so you can\'t retro commit.');
+        if (!commitType || !packageJson || !commitMessage || !jiraTicket) process.exit(1);
+        message = `${commitType}(${packageJson}): ${commitMessage}`;
+    }
 
-    if (!commitType || !packageJson || !commitMessage || !jiraTicket) process.exit(1);
-
-    const message = `${commitType}(${packageJson}): ${commitMessage}`;
-    await git.autoRebase(message, jiraTicket);
+    await git.autoRebase(message, ticket);
 
     if (await askConfirm('Do you also want to force push?')) {
         await git.fullPush();
