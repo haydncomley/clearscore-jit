@@ -1,6 +1,6 @@
 {
   "name": "jit",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "",
   "main": "src/index.ts",
   "bin": "bin/index.js",
@@ -33,7 +33,6 @@
     "dotenv": "^16.0.3",
     "git-repo-info": "^2.1.1",
     "ioredis": "5.3.2",
-    "kodmq": "/Users/haydncomley/Repos/kodmq/packages/kodmq",
     "prompts": "^2.4.2",
     "simple-git": "^3.16.0"
   }
