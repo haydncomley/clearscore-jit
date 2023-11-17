@@ -107,6 +107,7 @@ const branchExamples = [
     'updating-modules',
     'another-migration',
     'loosing-my-marbles',
+    'jfrogging-the-pipeline',
 ];
 
 export function whichBranchName() {
