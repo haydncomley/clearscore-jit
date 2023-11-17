@@ -76,7 +76,7 @@ export function whichPackageName() {
 
 const commitExamples = [
     'Squashed all the bugs 🐛',
-    'Casually remade flux on the weekend',
+    'Casually remade the website on the weekend',
     'Fixed y̶o̶u̶\'̶r̶e̶ your typos',
 ];
 
@@ -102,10 +102,11 @@ export function whichBreakingChangesMade() {
 }
 
 const branchExamples = [
-    'flux-2',
-    'clearscore-fix-final-new-2',
-    'update-eslint',
-    'yet-another-ts-migration',
+    'website-2',
+    'fix-final-new-2',
+    'updating-modules',
+    'another-migration',
+    'loosing-my-marbles',
 ];
 
 export function whichBranchName() {

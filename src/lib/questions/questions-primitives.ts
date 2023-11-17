@@ -45,7 +45,7 @@ export function selectTicketNumber(id: string, title: string) {
             const regex = /\w+-.+/gm;
             return (value as string).match(regex)[0].toUpperCase().trim();
         },
-        hint: 'e.g. CS-12345 or https://clearscore.atlassian.net/browse/CS-12345',
+        hint: 'e.g. Ticket Number or URL',
         instructions: false,
         message: title,
         name: id,
