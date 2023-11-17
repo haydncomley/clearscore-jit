@@ -1,0 +1,39 @@
+{
+  "name": "jit",
+  "version": "1.0.4",
+  "description": "A CLI wrapper for common Git tasks to speed up your workflow.",
+  "main": "src/index.ts",
+  "bin": "bin/index.js",
+  "scripts": {
+    "build": "node ./build.js && chmod +x ./bin/index.js",
+    "serve": "yarn build && node ./bin/index.js",
+    "start": "IS_TEST=true ts-node-dev --exit-child ./src/index.ts"
+  },
+  "keywords": [],
+  "author": "Haydn Comley <haydncomley@gmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/eslint": "^8",
+    "@types/node": "^18.11.18",
+    "@types/prompts": "^2.4.2",
+    "@typescript-eslint/eslint-plugin": "^5.59.0",
+    "@typescript-eslint/parser": "^5.59.0",
+    "esbuild": "^0.17.4",
+    "eslint": "^8.39.0",
+    "eslint-plugin-destructuring-newline": "^0.1.1",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
+    "eslint-plugin-sort-keys-fix": "^1.1.2",
+    "eslint-plugin-unused-imports": "^2.0.0",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^4.9.4",
+    "typescript-eslint": "^0.0.1-alpha.0"
+  },
+  "dependencies": {
+    "chalk": "4.1.2",
+    "dotenv": "^16.0.3",
+    "git-repo-info": "^2.1.1",
+    "ioredis": "5.3.2",
+    "prompts": "^2.4.2",
+    "simple-git": "^3.16.0"
+  }
+}
