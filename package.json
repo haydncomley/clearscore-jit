@@ -1,6 +1,6 @@
 {
   "name": "jit",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A CLI wrapper for common Git tasks to speed up your workflow.",
   "main": "src/index.ts",
   "bin": "bin/index.js",

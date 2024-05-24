@@ -1,7 +1,5 @@
-import { version } from '../package.json';
 
-import { DisplayBanner, OnError } from './lib/core/display';
-import { useGit } from './lib/core/git';
+import { ClearAndDisplayBanner } from './lib/core/display';
 import { ProcessAutoSquash } from './lib/processes/autoSquash.process';
 import { ProcessBackToMaster } from './lib/processes/backToMaster.process';
 import { ProcessFormattedCommit } from './lib/processes/formattedCommit.process';
@@ -13,17 +11,7 @@ import { askConfirm, askQuestions, whichDevelopmentStage } from './lib/questions
 import chalk from 'chalk';
 
 async function run() {
-    process.stdout.cursorTo(0, 0);
-    process.stdout.clearScreenDown();
-    
-    const gitDetails = useGit();
-    if (!gitDetails) OnError('Could not find a git repo.');
-
-    DisplayBanner({
-        color: chalk.green,
-        message: `${gitDetails.root} @ ${await gitDetails.branchName()}`,
-        title: `Jit (${version})`,
-    });
+    await ClearAndDisplayBanner();
 
     const { developmentStage } = await askQuestions([
         whichDevelopmentStage(),
@@ -47,6 +35,9 @@ async function run() {
         break;
     case 'checkoutMaster':
         await ProcessBackToMaster();
+        break;
+    case 'shareJit':
+        console.log(`\nInstall -> ${chalk.bgBlack(chalk.greenBright(' npm install -g --save https://github.com/haydncomley/clearscore-jit/tarball/master '))}\n`);
         break;
     case 'test':
         console.log('ECHO ECHO ecHO echO echo...');

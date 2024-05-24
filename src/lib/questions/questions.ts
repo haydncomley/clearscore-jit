@@ -17,14 +17,14 @@ export async function askConfirm(message: string, initial = true) {
 }
 
 export function whichDevelopmentStage() {
-    
     return selectFromList('developmentStage', 'What do you want to do?', [
-        { title: `${chalk.cyanBright('Branch - New ')}${chalk.grey('(create a new branch)')}`, value: 'branchNew' },
-        { title: `${chalk.magentaBright('Commit - Formatted ')}${chalk.grey('(create a commit ready for a PR)')}`, value: 'commitFull' },
-        { title: `${chalk.magentaBright('Commit - Retro ')}${chalk.grey('(force push current changes on-top of the last commit)')}`, value: 'commitRetro' },
-        { title: `${chalk.magentaBright('Commit - Dev ')}${chalk.grey('(quickly push code while developing)')}`, value: 'commitQuick' },
-        { title: `${chalk.greenBright('Squish ')}${chalk.grey('(a semi-automated squash with master)')}`, value: 'squash' },
-        { title: `${chalk.redBright('Reset Branch ')}${chalk.grey('(back to a clean slate from master)')}`, value: 'checkoutMaster' },
+        { title: `${chalk.cyanBright('Branch - ✨ New ')}${chalk.grey('(create a new branch)')}`, value: 'branchNew' },
+        { title: `${chalk.magentaBright('Commit - 📝 Formatted ')}${chalk.grey('(create a commit ready for a PR)')}`, value: 'commitFull' },
+        { title: `${chalk.magentaBright('Commit - 🔄 Retro ')}${chalk.grey('(force push current changes on-top of the last commit)')}`, value: 'commitRetro' },
+        { title: `${chalk.magentaBright('Commit - 🧪 Dev ')}${chalk.grey('(quickly push code while developing)')}`, value: 'commitQuick' },
+        { title: `${chalk.greenBright('Other  - 🐛 Squish  ')}${chalk.grey('(a semi-automated squash with master)')}`, value: 'squash' },
+        { title: `${chalk.blueBright('Other  - 🔗 Share Jit ')}${chalk.grey('(print npm install for Jit)')}`, value: 'shareJit' },
+        { title: `${chalk.redBright('Other  - ❌ Reset Branch ')}${chalk.grey('(back to a clean slate from master)')}`, value: 'checkoutMaster' },
     ].concat(IsTesting() ? [
         { title: 'Echo?', value: 'test' },
     ].map((x) => ({ ...x, title: `${chalk.yellowBright('[TEST]')} ${x.title}` })) : []));
@@ -76,14 +76,15 @@ export function whichPackageName() {
 
 const commitExamples = [
     'Squashed all the bugs 🐛',
-    'Casually remade the website on the weekend',
     'Fixed y̶o̶u̶\'̶r̶e̶ your typos',
+    'Force pushing main',
+    'Taking - my time',
 ];
 
 export function whichCommitMessage() {
     return {
         format: (value: string) => value.toLowerCase().trim(),
-        message: `Commit Message ${chalk.grey(`(e.g. ${ commitExamples[Math.floor(Math.random() * commitExamples.length)] })`)}`,
+        message: `Commit Message ${chalk.grey(`(e.g. ${commitExamples[Math.floor(Math.random() * commitExamples.length)]})`)}`,
         name: 'commitMessage',
         type: 'text',
         validate: (value: string) => {
@@ -104,21 +105,16 @@ export function whichBreakingChangesMade() {
 const branchExamples = [
     'website-2',
     'fix-final-new-2',
-    'updating-modules',
-    'another-migration',
+    'just-one-more-commit',
+    'migrating-the-migration',
     'loosing-my-marbles',
-    'jfrogging-the-pipeline',
 ];
 
 export function whichBranchName() {
     return {
-        format: (value: string) => value.trim().toLowerCase().replaceAll(' ', '-'),
-        message: `Branch Name ${chalk.grey(`(e.g. ${ branchExamples[Math.floor(Math.random() * branchExamples.length)] })`)}`,
+        format: (value: string) => value.replace(/\s+/g, '-').toLowerCase(),
+        message: `Branch Name ${chalk.grey(`(these have to be kebab-case - e.g. ${branchExamples[Math.floor(Math.random() * branchExamples.length)]})`)}`,
         name: 'branchName',
         type: 'text',
-        validate: (value: string) => {
-            const regex = /^[a-zA-Z0-9-]+$/;
-            return (value.match(regex)) ? true : 'Branch has to be kebab-case';
-        },
     } as PromptObject;
 }

@@ -165,6 +165,12 @@ export const findChangedPackages = async () => {
     return [ ...findRelevantPackages(fileChanges), 'repo' ];
 };
 
+export const getGitRootDirName = () => {
+    const git = useGit();
+    const parts = git.root.split(/[\\/]/);
+    return parts[parts.length - 1];
+};
+
 const findRelevantPackages = (files: string[]) => {
     const packages = new Set(files.map((file) => findRelevantPackageName(file)));
     return Array.from(packages).filter(Boolean).map((x) => {

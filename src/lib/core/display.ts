@@ -1,3 +1,7 @@
+import { version } from '../../../package.json';
+
+import { getGitRootDirName,useGit } from './git';
+
 import chalk, { Chalk } from 'chalk';
 
 export const DisplayBanner = ({
@@ -28,6 +32,23 @@ export const DisplayBanner = ({
     });
     console.log(color(output));
 };
+
+export async function ClearAndDisplayBanner() {
+    process.stdout.cursorTo(0, 0);
+    process.stdout.clearScreenDown();
+
+    const gitDetails = useGit();
+    if (!gitDetails) OnError('Could not find a git repo.');
+
+    const branchName = (await gitDetails.branchName()).trim();
+    const isMainBranch = [ 'master', 'main', 'trunk' ].includes(branchName);
+
+    DisplayBanner({
+        color: chalk.green,
+        message: `${getGitRootDirName()} @ ${branchName} ${ isMainBranch ? '🌳' : '🪵' }`,
+        title: `🤠 Jit (${version}) 🎉`,
+    });
+}
 
 export function OnSuccess(message: string, dontExit?: boolean) {
     console.log(chalk.greenBright(`${chalk.bold('[OK]')} ${message}`));
