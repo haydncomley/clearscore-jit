@@ -5,6 +5,10 @@ import { askConfirm, askQuestions, selectCommitType, whichBreakingChangesMade, w
 export const ProcessFormattedCommit = async () => {
     const git = useGit();
 
+    if ([ 'master', 'main', 'trunk' ].includes((await git.branchName()).trim())) {
+        OnError('You are currently the main branch - please create a new branch first!');
+    }
+
     if (!await git.hasOutStandingChanges()) {
         OnError('You don\'t have any outstanding changes to commit.');
     }
